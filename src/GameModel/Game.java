@@ -10,12 +10,49 @@ import View.UNOCard;
 
 public class Game implements GameConstants {
 
+	/*@ public initially players != null;
+	  @ public initially players.length == 2;
+	  @ public invariant players.length == 2;
+	  @ public invariant (\exists int i; 0 <= i && i < players.length;
+	  @ 	players[i].getTotalCards() > 0);
+	  @ public invariant (\exists int i; 0 <= i && i < players.length;
+	  @ 	players[i].isMyTurn() <==> (\forall int j; 0 <= j && j < players.length;
+	  @ 		j != i ==> !players[j].isMyTurn()));
+	  @ public constraint (\forall int i; 0 <= i && i < players.length;
+	  @ 	\old(players[i]) == players[i]);
+	  @*/
 	private /*@ spec_public nullable @*/ Player[] players;
+
+	/*@ public initially isOver == false;
+	  @ public invariant isOver == true ==> (\exists int i; 0 <= i && i < players.length;
+	  @ 	players[i].getTotalCards() == 0 && (\forall int j; 0 <= j && j < players.length;
+	  @ 		j != i ==> players[j].getTotalCards() > 0));
+	  @*/
 	private /*@ spec_public @*/ boolean isOver;
+
+	/*@ public initially GAMEMODE == vsPC || GAMEMODE == MANUAL;
+	  @ public invariant GAMEMODE == vsPC || GAMEMODE == MANUAL;
+	  @ public constraint \old(GAMEMODE) == GAMEMODE;
+	  @*/
 	private /*@ spec_public @*/ int GAMEMODE;
 
+	/*@ public initially (GAMEMODE == vsPC && pc != null) || (GAMEMODE == MANUAL && pc == null);
+	  @ public constraint \old(pc) == pc;
+	  @*/
 	private /*@ spec_public nullable @*/ PC pc;
+
+	/*@ public initially dealer != null;
+	  @ public invariant dealer != null;
+	  @ public constraint \old(dealer) == dealer;
+	  @*/
 	private /*@ spec_public nullable @*/ Dealer dealer;
+
+	/*@ public initially cardStack != null;
+	  @ public invariant cardStack != null;
+	  @ public invariant (\forall int i; 0 <= i && i < cardStack.size();
+	  @ 	cardStack.get(i) != null);
+	  @ public constraint \old(cardStack) == cardStack;
+	  @*/
 	private /*@ spec_public nullable @*/ Stack<UNOCard> cardStack;
 
 
@@ -43,15 +80,26 @@ public class Game implements GameConstants {
 		isOver = false;
 	}
 
+	/*@ requires players != null;
+	  @ ensures \result == players;
+	  @*/
 	public /*@ pure @*/ Player[] getPlayers() {
 		return players;
 	}
 
+	/*@ requires dealer != null;
+	  @ ensures \result != null;
+	  @*/
 	public /*@ pure @*/ UNOCard getCard() {
 		return dealer.getCard();
 	}
 
-	public void removePlayedCard(UNOCard playedCard) {
+	/*@ requires playedCard != null;
+	  @ requires players != null;
+	  @ ensures (\forall int i; 0 < i && i < players.length;
+	  @ 	\old(players[i]).hasCard(playedCard) ==> !players[i].hasCard(playedCard));
+	  @*/
+	public void removePlayedCard(/*@ non_null @*/ UNOCard playedCard) {
 
 		for (Player p : players) {
 			if (p.hasCard(playedCard)){
@@ -69,23 +117,29 @@ public class Game implements GameConstants {
 	}
 
 	//give player a card
-	public void drawCard(UNOCard topCard) {
-
-		boolean canPlay = false;
-
+	/*@ requires topCard != null;
+	  @ requires players != null;
+	  @ ensures remainingCards() == \old(remainingCards()) - 1;
+	// @ ensures (\exists int i; 0 <= i && i < players.length;
+	// @ 	\old(players[i]).getTotalCards() == players[i].getTotalCards() - 1);
+	  @*/
+	public void drawCard(/*@ non_null @*/ UNOCard topCard) {
 		for (Player p : players) {
 			if (p.isMyTurn()) {
 				UNOCard newCard = getCard();
 				p.obtainCard(newCard);
-				canPlay = canPlay(topCard, newCard);
-				break;
+				if (!canPlay(topCard, newCard)) {
+					switchTurn();
+				}
+				return;
 			}
 		}
-
-		if (!canPlay)
-			switchTurn();
 	}
 
+	/*@ requires players != null;
+	  @ ensures (\forall int i; 0 <= i && i < players.length;
+	  @ 	players[i] == \old(players[i]) && players[i] != null);
+	  @*/
 	public void switchTurn() {
 		for (Player p : players) {
 			p.toggleTurn();
@@ -94,6 +148,10 @@ public class Game implements GameConstants {
 	}
 
 	//Draw cards x times
+	/*@ requires times > 0;
+	  @ assignable players[*];
+	  @ ensures remainingCards() == \old(remainingCards()) - times;
+	  @*/
 	public void drawPlus(int times) {
 		for (Player p : players) {
 			if (!p.isMyTurn()) {
@@ -104,6 +162,9 @@ public class Game implements GameConstants {
 	}
 
 	//response whose turn it is
+	/*@ requires infoPanel != null;
+	  @ assignable \nothing;
+	  @*/
 	public void whoseTurn() {
 
 		for (Player p : players) {
@@ -149,7 +210,7 @@ public class Game implements GameConstants {
 	}
 
 	//Check if this card can be played
-	private /*@ pure @*/ boolean canPlay(UNOCard topCard, UNOCard newCard) {
+	private /*@ pure @*/ boolean canPlay(/*@ non_null @*/ UNOCard topCard, /*@ non_null @*/ UNOCard newCard) {
 
 		// Color or value matches
 		if (topCard.getColor().equals(newCard.getColor())
@@ -196,7 +257,7 @@ public class Game implements GameConstants {
 	}
 
 	//if it's PC's turn, play it for pc
-	public void playPC(UNOCard topCard) {
+	public void playPC(/*@ non_null @*/ UNOCard topCard) {
 
 		if (pc.isMyTurn()) {
 			boolean done = pc.play(topCard);
