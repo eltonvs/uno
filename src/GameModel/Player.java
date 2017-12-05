@@ -21,60 +21,78 @@ public class Player {
 		myCards = new LinkedList<>();
 	}
 
-	/*@ assignable name, myCards;
+	/*@ requires player != null;
+	  @ assignable name, myCards;
 	  @ ensures name == player;
 	  @ ensures myCards != null && myCards.size() == 0;
 	  @*/
-	public Player(String player){
+	public Player(/*@ non_null @*/ String player){
 		setName(player);
 		myCards = new LinkedList<>();
 	}
 
-	/*@ assignable this.name;
+	/*@ requires newName != null;
+	  @ assignable this.name;
 	  @ ensures this.name == newName;
 	  @*/
-	public void setName(String newName){
+	public void setName(/*@ non_null @*/ String newName){
 		name = newName;
 	}
 
-	//@ ensures \result == this.name;
+	/*@ requires this.name != null;
+	  @ ensures \result == this.name;
+	  @*/
 	public /*@ pure @*/ String getName(){
 		return this.name;
 	}
 
-	/*@ ensures myCards.size() == \old(myCards.size()) + 1;
+	/*@ requires card != null;
+	  @ requires this.myCards != null;
+	  @ assignable myCards;
+	  @ ensures myCards.size() == \old(myCards.size()) + 1;
 	  @ ensures myCards.get(myCards.size() - 1) == card;
-	  @ ensures_redundantly
-	  @ 	(\forall int i; 0 <= i && i < myCards.size() - 1;
-	  @ 		myCards.get(i) == \old(myCards).get(i));
+	  @ ensures (\forall int i; 0 <= i && i < myCards.size() - 1;
+	  @ 	myCards.get(i) == \old(myCards).get(i));
 	  @*/
-	public void obtainCard(UNOCard card){
+	public void obtainCard(/*@ non_null @*/ UNOCard card){
 		myCards.add(card);
 	}
 
-	//@ ensures \result == this.myCards;
-	public /*@ pure @*/LinkedList<UNOCard> getAllCards(){
+	/*@ requires this.myCards!= null;
+	  @ ensures this.myCards.size() >= 0;
+	  @ ensures \result == this.myCards;
+	  @ ensures (\forall int i; 0 <= i && i < this.myCards.size();
+	  @ 	this.myCards.get(i) != null
+	  @ 		&& this.myCards.get(i) instanceof UNOCard);
+	  @*/
+	public /*@ pure @*/ LinkedList<UNOCard> getAllCards(){
 		return myCards;
 	}
 
-	//@ ensures \result == myCards.size();
+	/*@ requires this.myCards!= null;
+	  @ ensures \result == myCards.size();
+	  @*/
 	public /*@ pure @*/ int getTotalCards(){
 		return myCards.size();
 	}
 
-	/*@ ensures \result
-	  @ 	== (\num_of int j; 0 <= j && j < myCards.size();
-	  @ 		myCards.get(j) == thisCard) > 0;
+	/*@ requires thisCard != null;
+	  @ requires this.myCards != null;
+	  @ ensures \result
+	  @ 	== (\exists int j; 0 <= j && j < myCards.size();
+	  @ 		myCards.get(j) == thisCard);
 	  @*/
-	public /*@ pure @*/ boolean hasCard(UNOCard thisCard){
+	public /*@ pure @*/ boolean hasCard(/*@ non_null @*/ UNOCard thisCard){
 		return myCards.contains(thisCard);
 	}
 
-	/*@ assignable myCards, playedCards;
+	/*@ requires thisCard != null;
+	  @ requires this.myCards != null;
+	  @ assignable myCards, playedCards;
 	  @ ensures myCards.size() == \old(myCards.size()) - 1;
 	  @ ensures playedCards == \old(playedCards) + 1;
 	  @*/
-	public void removeCard(UNOCard thisCard){
+	public void removeCard(/*@ non_null @*/ UNOCard thisCard){
 		myCards.remove(thisCard);
 		playedCards++;
 	}
