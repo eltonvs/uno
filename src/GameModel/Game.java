@@ -10,65 +10,64 @@ import View.UNOCard;
 
 public class Game implements GameConstants {
 
-	private  /*@ spec_public nullable @*/ Player[] players;
-	private boolean isOver;
-	private int GAMEMODE;
-	
-	private  /*@ spec_public nullable @*/ PC pc;
+	private /*@ spec_public nullable @*/ Player[] players;
+	private /*@ spec_public @*/ boolean isOver;
+	private /*@ spec_public @*/ int GAMEMODE;
+
+	private /*@ spec_public nullable @*/ PC pc;
 	private /*@ spec_public nullable @*/ Dealer dealer;
 	private /*@ spec_public nullable @*/ Stack<UNOCard> cardStack;
-	
-	
-	public Game(int mode){
-		
+
+
+	public Game(int mode) {
 		GAMEMODE = mode;
-		
+
 		//Create players
-		String name = (GAMEMODE==MANUAL) ? JOptionPane.showInputDialog("Player 1") : "PC";	
+		String name = (GAMEMODE == MANUAL) ? JOptionPane.showInputDialog("Player 1") : "PC";
 		String name2 = JOptionPane.showInputDialog("Player 2");
-		
-		if(GAMEMODE==vsPC)
+
+		if (GAMEMODE == vsPC)
 			pc = new PC();
-		
-		Player player1 = (GAMEMODE==vsPC) ? pc : new Player(name);
-		Player player2 = new Player(name2);		
-		player2.toggleTurn();				//Initially, player2's turn		
-			
-		players = new Player[]{player1, player2};			
-		
+
+		Player player1 = (GAMEMODE == vsPC) ? pc : new Player(name);
+		Player player2 = new Player(name2);
+		player2.toggleTurn();				//Initially, player2's turn
+
+		players = new Player[]{player1, player2};
+
 		//Create Dealer
 		dealer = new Dealer();
 		cardStack = dealer.shuffle();
 		dealer.spreadOut(players);
-		
+
 		isOver = false;
 	}
 
-	public /*@ pure @*/Player[] getPlayers() {
+	public /*@ pure @*/ Player[] getPlayers() {
 		return players;
 	}
 
-	public UNOCard getCard() {
+	public /*@ pure @*/ UNOCard getCard() {
 		return dealer.getCard();
 	}
-	
+
 	public void removePlayedCard(UNOCard playedCard) {
 
 		for (Player p : players) {
 			if (p.hasCard(playedCard)){
 				p.removeCard(playedCard);
-				
+
 				if (p.getTotalCards() == 1 && !p.getSaidUNO()) {
 					infoPanel.setError(p.getName() + " Forgot to say UNO");
 					p.obtainCard(getCard());
 					p.obtainCard(getCard());
-				}else if(p.getTotalCards()>2){
+				} else if(p.getTotalCards() > 2) {
 					p.setSaidUNOFalse();
 				}
-			}			
+			}
 		}
 	}
-	
+
 	//give player a card
 	public void drawCard(UNOCard topCard) {
 
@@ -93,7 +92,7 @@ public class Game implements GameConstants {
 		}
 		whoseTurn();
 	}
-	
+
 	//Draw cards x times
 	public void drawPlus(int times) {
 		for (Player p : players) {
@@ -103,7 +102,7 @@ public class Game implements GameConstants {
 			}
 		}
 	}
-	
+
 	//response whose turn it is
 	public void whoseTurn() {
 
@@ -116,26 +115,26 @@ public class Game implements GameConstants {
 		infoPanel.setDetail(playedCardsSize(), remainingCards());
 		infoPanel.repaint();
 	}
-	
+
 	//return if the game is over
 	public boolean isOver() {
-		
+
 		if(cardStack.isEmpty()){
-			isOver= true;
+			isOver = true;
 			return isOver;
 		}
-		
+
 		for (Player p : players) {
 			if (!p.hasCards()) {
 				isOver = true;
 				break;
 			}
 		}
-		
+
 		return isOver;
 	}
 
-	public int remainingCards() {
+	public /*@ pure @*/ int remainingCards() {
 		return cardStack.size();
 	}
 
@@ -150,7 +149,7 @@ public class Game implements GameConstants {
 	}
 
 	//Check if this card can be played
-	private boolean canPlay(UNOCard topCard, UNOCard newCard) {
+	private /*@ pure @*/ boolean canPlay(UNOCard topCard, UNOCard newCard) {
 
 		// Color or value matches
 		if (topCard.getColor().equals(newCard.getColor())
@@ -178,7 +177,7 @@ public class Game implements GameConstants {
 					p.obtainCard(getCard());
 				}
 			}
-		}		
+		}
 	}
 
 	public void setSaidUNO() {
@@ -191,20 +190,17 @@ public class Game implements GameConstants {
 			}
 		}
 	}
-	
-	public boolean isPCsTurn(){
-		if(pc.isMyTurn()){
-			return true;
-		}
-		return false;
+
+	public /*@ pure @*/ boolean isPCsTurn(){
+		return pc.isMyTurn();
 	}
 
 	//if it's PC's turn, play it for pc
-	public void playPC(UNOCard topCard) {		
-		
+	public void playPC(UNOCard topCard) {
+
 		if (pc.isMyTurn()) {
 			boolean done = pc.play(topCard);
-			
+
 			if(!done)
 				drawCard(topCard);
 		}

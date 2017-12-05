@@ -18,9 +18,9 @@ public class CardDeck implements GameConstants {
 	public CardDeck() {
 
 		// Initialize Cards
-		UNOcards = new LinkedList<UNOCard>();
+		UNOcards = new LinkedList<>();
 
-		addCards();
+    addCards();
 		addCardListener(CARDLISTENER);
 	}
 
@@ -63,7 +63,7 @@ public class CardDeck implements GameConstants {
 	}
 
 	//@ ensures \result == UNOcards;
-	public LinkedList<UNOCard> getCards() {
+	public /*@ pure @*/ LinkedList<UNOCard> getCards() {
 		return UNOcards;
 	}
 }

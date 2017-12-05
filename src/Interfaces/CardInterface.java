@@ -19,13 +19,13 @@ public interface CardInterface {
 
 	void setColor(Color newColor);
 
-	Color getColor();
+	/*@ pure @*/ Color getColor();
 
 	void setValue(String newValue);
 
-	String getValue();
+	/*@ pure @*/ String getValue();
 
 	void setType(int newType);
 
-	int getType();
+	/*@ pure @*/ int getType();
 }
