@@ -10,9 +10,9 @@ import View.UNOCard;
 
 public class Game implements GameConstants {
 
-	private  /*@ spec_public nullable @*/ Player[] players;
-	private boolean isOver;
-	private int GAMEMODE;
+	private /*@ spec_public nullable @*/ Player[] players;
+	private /*@ spec_public @*/ boolean isOver;
+	private /*@ spec_public @*/ int GAMEMODE;
 
 	private /*@ spec_public nullable @*/ PC pc;
 	private /*@ spec_public nullable @*/ Dealer dealer;
@@ -23,13 +23,13 @@ public class Game implements GameConstants {
 		GAMEMODE = mode;
 
 		//Create players
-		String name = (GAMEMODE==MANUAL) ? JOptionPane.showInputDialog("Player 1") : "PC";
+		String name = (GAMEMODE == MANUAL) ? JOptionPane.showInputDialog("Player 1") : "PC";
 		String name2 = JOptionPane.showInputDialog("Player 2");
 
-		if(GAMEMODE==vsPC)
+		if (GAMEMODE == vsPC)
 			pc = new PC();
 
-		Player player1 = (GAMEMODE==vsPC) ? pc : new Player(name);
+		Player player1 = (GAMEMODE == vsPC) ? pc : new Player(name);
 		Player player2 = new Player(name2);
 		player2.toggleTurn();				//Initially, player2's turn
 
@@ -61,7 +61,7 @@ public class Game implements GameConstants {
 					infoPanel.setError(p.getName() + " Forgot to say UNO");
 					p.obtainCard(getCard());
 					p.obtainCard(getCard());
-				}else if(p.getTotalCards()>2){
+				} else if(p.getTotalCards() > 2) {
 					p.setSaidUNOFalse();
 				}
 			}
@@ -120,7 +120,7 @@ public class Game implements GameConstants {
 	public boolean isOver() {
 
 		if(cardStack.isEmpty()){
-			isOver= true;
+			isOver = true;
 			return isOver;
 		}
 

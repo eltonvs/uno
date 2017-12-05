@@ -19,7 +19,9 @@ public class PC extends Player implements GameConstants {
 
 	//PC plays a card
 	/*@ requires topCard != null;
-	  @ ensures \result == false || \result == true;
+	  @ requires (\forall int i; 0 <= i && i < getAllCards().size(); getAllCards().get(i) != null);
+	  @ ensures (\forall int i; 0 <= i && i < getAllCards().size(); getAllCards().get(i) != null);
+	  @ ensures \result == true || \result == false;
 	  @*/
 	public boolean play(/*@ non_null @*/ UNOCard topCard) {
 

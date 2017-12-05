@@ -132,6 +132,7 @@ public class PlayerPanel extends JPanel implements GameConstants {
 
 	class MyButtonHandler implements ActionListener {
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 
 			if (player.isMyTurn()) {
