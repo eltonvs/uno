@@ -1,4 +1,5 @@
 package View;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -20,26 +21,31 @@ public abstract class UNOCard extends JPanel implements CardInterface, UNOConsta
 
 	/*@ public initially cardColor != null;
 	  @ public invariant cardColor != null;
+	  @ protected represents col <- cardColor;
 	  @*/
-	private /*@ nullable spec_public @*/ Color cardColor;
-	
+	private /*@ nullable spec_public @*/ Color cardColor; //@ in col;
+
 	/*@ public initially value != null;
 	  @ public invariant value != null;
+	  @ protected represents val <- value;
 	  @*/
-	private /*@ nullable spec_public @*/ String value;
-	
+	private /*@ nullable spec_public @*/ String value; //@ in val;
+
 	/*@ public initially type == 0;
 	  @ public invariant type >= 0;
+	  @ protected represents typ <- type;
 	  @*/
-	private /*@ spec_public @*/ int type = 0;
+	private /*@ spec_public @*/ int type = 0; //@ in typ;
 
-	private /*@ spec_public @*/ Border defaultBorder = BorderFactory.createEtchedBorder(WHEN_FOCUSED, Color.white, Color.gray);
-	private /*@ spec_public @*/ Border focusedBorder = BorderFactory.createEtchedBorder(WHEN_FOCUSED, Color.black, Color.gray);
+	private /*@ spec_public @*/ Border defaultBorder = BorderFactory.createEtchedBorder(WHEN_FOCUSED, Color.white,
+			Color.gray);
+	private /*@ spec_public @*/ Border focusedBorder = BorderFactory.createEtchedBorder(WHEN_FOCUSED, Color.black,
+			Color.gray);
 
-	public UNOCard(){
+	public UNOCard() {
 	}
 
-	public UNOCard(Color cardColor, int cardType, String cardValue){
+	public UNOCard(Color cardColor, int cardType, String cardValue) {
 		this.cardColor = cardColor;
 		this.type = cardType;
 		this.value = cardValue;
@@ -51,7 +57,7 @@ public abstract class UNOCard extends JPanel implements CardInterface, UNOConsta
 	}
 
 	@Override
-	protected void paintComponent(Graphics g){
+	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D) g;
 
@@ -63,34 +69,34 @@ public abstract class UNOCard extends JPanel implements CardInterface, UNOConsta
 
 		int margin = 5;
 		g2.setColor(cardColor);
-		g2.fillRect(margin, margin, cardWidth-2*margin, cardHeight-2*margin);
+		g2.fillRect(margin, margin, cardWidth - 2 * margin, cardHeight - 2 * margin);
 
 		g2.setColor(Color.white);
 		AffineTransform org = g2.getTransform();
-		g2.rotate(45,cardWidth*3/4,cardHeight*3/4);
+		g2.rotate(45, cardWidth * 3 / 4, cardHeight * 3 / 4);
 
-		g2.fillOval(0,cardHeight*1/4,cardWidth*3/5, cardHeight);
+		g2.fillOval(0, cardHeight * 1 / 4, cardWidth * 3 / 5, cardHeight);
 		g2.setTransform(org);
 
 		//Value in the center
-		Font defaultFont = new Font("Helvetica", Font.BOLD, cardWidth/2+5);
+		Font defaultFont = new Font("Helvetica", Font.BOLD, cardWidth / 2 + 5);
 		FontMetrics fm = this.getFontMetrics(defaultFont);
-		int StringWidth = fm.stringWidth(value)/2;
-		int FontHeight = defaultFont.getSize()*1/3;
+		int StringWidth = fm.stringWidth(value) / 2;
+		int FontHeight = defaultFont.getSize() * 1 / 3;
 
 		g2.setColor(cardColor);
 		g2.setFont(defaultFont);
-		g2.drawString(value, cardWidth/2-StringWidth, cardHeight/2+FontHeight);
+		g2.drawString(value, cardWidth / 2 - StringWidth, cardHeight / 2 + FontHeight);
 
 		//Value in the corner
-		defaultFont = new Font("Helvetica", Font.ITALIC, cardWidth/5);
+		defaultFont = new Font("Helvetica", Font.ITALIC, cardWidth / 5);
 		fm = this.getFontMetrics(defaultFont);
-		StringWidth = fm.stringWidth(value)/2;
-		FontHeight = defaultFont.getSize()*1/3;
+		StringWidth = fm.stringWidth(value) / 2;
+		FontHeight = defaultFont.getSize() * 1 / 3;
 
 		g2.setColor(Color.white);
 		g2.setFont(defaultFont);
-		g2.drawString(value, 2*margin,5*margin);
+		g2.drawString(value, 2 * margin, 5 * margin);
 	}
 
 	/**
@@ -99,21 +105,21 @@ public abstract class UNOCard extends JPanel implements CardInterface, UNOConsta
 	class MouseHandler extends MouseAdapter {
 
 		@Override
-		public void mouseEntered(MouseEvent e){
+		public void mouseEntered(MouseEvent e) {
 			setBorder(focusedBorder);
 		}
 
 		@Override
-		public void mouseExited(MouseEvent e){
+		public void mouseExited(MouseEvent e) {
 			setBorder(defaultBorder);
 		}
 	}
 
 	//@ requires newSize != null;
-	public void setCardSize(/*@ non_null @*/ Dimension newSize){
+	public void setCardSize(/*@ non_null @*/ Dimension newSize) {
 		this.setPreferredSize(newSize);
 	}
-	
+
 	@Override
 	public void setColor(/*@ non_null @*/ Color newColor) {
 		this.cardColor = newColor;

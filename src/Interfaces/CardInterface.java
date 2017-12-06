@@ -4,6 +4,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 
 public interface CardInterface {
+	//@ public model instance String val;
+	//@ public model instance int typ;
+	//@ public model instance Color col;
 
 	/*@ public constraint \old(WIDTH) == WIDTH;
 	  @*/
@@ -27,26 +30,30 @@ public interface CardInterface {
 	/*@ spec_public @*/ int OFFSET = 71;
 
 	/*@ requires newColor != null;
+	  @ ensures col == newColor;
 	  @*/
 	void setColor(/*@ non_null @*/ Color newColor);
 
-	/*@ ensures \result != null;
+	/*@ ensures \result == col;
 	  @*/
 	/*@ pure @*/ Color getColor();
 
 	/*@ requires newValue != null;
+	  @ ensures val == newValue;
 	  @*/
 	void setValue(/*@ non_null @*/ String newValue);
 
-	/*@ ensures \result != null;
+	/*@ ensures \result == val;
 	  @*/
 	/*@ pure @*/ String getValue();
 
 	/*@ requires newType == UNOConstants.NUMBERS || newType == UNOConstants.ACTION || newType == UNOConstants.WILD;
+	  @ ensures typ == newType;
 	  @*/
 	void setType(int newType);
 
 	/*@ ensures \result == UNOConstants.NUMBERS || \result == UNOConstants.ACTION || \result == UNOConstants.WILD;
+	  @ ensures \result == typ;
 	  @*/
 	/*@ pure @*/ int getType();
 }
