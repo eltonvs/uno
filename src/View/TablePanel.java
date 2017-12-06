@@ -12,8 +12,15 @@ import Interfaces.GameConstants;
 
 public class TablePanel extends JPanel implements GameConstants {
 
-	private UNOCard topCard;
-	private JPanel table;
+	/*@ public initially topCard != null;
+	  @ public invariant topCard != null;
+	  @*/
+	private /*@ spec_public nullable @*/ UNOCard topCard;
+	
+	/*@ public initially table != null;
+	  @ public invariant table != null;
+	  @*/
+	private /*@ spec_public nullable @*/ JPanel table;
 
 	public TablePanel(UNOCard firstCard){
 		setOpaque(false);
@@ -56,6 +63,10 @@ public class TablePanel extends JPanel implements GameConstants {
 		add(infoPanel, c);
 	}
 
+	/*@ requires playedCard != null;
+	  @ assignable topCard;
+	  @ ensures topCard == playedCard;
+	  @*/
 	public void setPlayedCard(UNOCard playedCard){
 		table.removeAll();
 		topCard = playedCard;
@@ -64,6 +75,9 @@ public class TablePanel extends JPanel implements GameConstants {
 		setBackgroundColor(playedCard);
 	}
 
+	/*@ requires playedCard != null;
+	  @ ensures playedCard.getType() == WILD || playedCard.getType() != WILD;
+	  @*/
 	public void setBackgroundColor(UNOCard playedCard){
 		Color background;
 		if(playedCard.getType()==WILD)

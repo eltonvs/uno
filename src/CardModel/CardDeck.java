@@ -12,7 +12,10 @@ import View.UNOCard;
  */
 public class CardDeck implements GameConstants {
 
-	// public initially UNOcards != null 
+	/*@ public initially UNOcards != null;
+	  @ public invariant (\forall int i; 0 <= i && i < UNOcards.size(); 
+	  @ 			UNOcards.get(i) != null);
+	  @*/
 	private /*@ spec_public nullable @*/ LinkedList<UNOCard> UNOcards;
 
 	public CardDeck() {
@@ -20,13 +23,15 @@ public class CardDeck implements GameConstants {
 		// Initialize Cards
 		UNOcards = new LinkedList<>();
 
-    addCards();
+		addCards();
 		addCardListener(CARDLISTENER);
 	}
 
 	
 	// Create 108 cards for this CardDeck
-	/*@ ensures (\forall int i; 0 <= i && i < UNOcards.size(); UNOcards.get(i) != null);
+	/*@ ensures (\forall int i; 0 <= i && i < UNOcards.size(); 
+	  @ 			UNOcards.get(i) != null);
+	  @ ensures UNOcards.size() == 108;
 	  @*/
 	private void addCards() {
 		for (Color color : UNO_COLORS) {
@@ -56,7 +61,10 @@ public class CardDeck implements GameConstants {
 	}
 
 	// Cards have MouseListener
-	//@ requires listener != null;
+	/*@ requires listener != null;
+	  @ ensures (\forall int i; 0 <= i && i < UNOcards.size();
+	  @ 		UNOcards.get(i) != null); 
+	  @*/
 	public void addCardListener(MyCardListener listener) {
 		for (UNOCard card : UNOcards)
 			card.addMouseListener(listener);

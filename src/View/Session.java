@@ -10,10 +10,14 @@ import javax.swing.JPanel;
 import GameModel.Game;
 
 public class Session extends JPanel {
+	
 	private /*@ spec_public nullable @*/ PlayerPanel player1;
 	private /*@ spec_public nullable @*/ PlayerPanel player2;
 	private /*@ spec_public nullable @*/ TablePanel table;
 
+	/*@ public initially game != null;
+	  @ public invariant game != null;
+	  @*/
 	private /*@ spec_public nullable @*/ Game game;
 
 	public Session(Game newGame, UNOCard firstCard) {
@@ -33,8 +37,7 @@ public class Session extends JPanel {
 		add(player2, BorderLayout.SOUTH);
 	}
 
-	/*@
-	  @ assignable player1, player2;
+	/*@ assignable player1, player2;
 	  @ ensures player1 != null && player1.getPlayer() == game.getPlayers()[0];
 	  @ ensures player2 != null && player2.getPlayer() == game.getPlayers()[1];
 	  @*/
@@ -51,6 +54,9 @@ public class Session extends JPanel {
 		revalidate();
 	}
 
+	/*@ requires playedCard != null;
+	  @ assignable table;
+	  @*/
 	public void updatePanel(UNOCard playedCard) {
 		table.setPlayedCard(playedCard);
 		refreshPanel();
