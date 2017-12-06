@@ -178,38 +178,59 @@ public class Game implements GameConstants {
 	}
 
 	//return if the game is over
-	public boolean isOver() {
-
-		if(cardStack.isEmpty()){
-			isOver = true;
-			return isOver;
+	/*@ requires cardStack != null;
+	  @ assignable \nothing;
+	  @ ensures \result == true <==> (cardStack.isEmpty() || (\exists int i;
+	  @ 	0 <= i && i < players.length; !players[i].hasCards()));
+	  @ ensures \result == isOver;
+	  @*/
+	public /*@ pure @*/ boolean isOver() {
+		if (cardStack.isEmpty()) {
+			return isOver = true;
 		}
 
 		for (Player p : players) {
 			if (!p.hasCards()) {
-				isOver = true;
-				break;
+				return isOver = true;
 			}
 		}
 
-		return isOver;
+		return isOver = false;
 	}
 
+	/*@ requires cardStack != null;
+	  @ ensures \result >= 0;
+	  @ ensures \result == cardStack.size();
+	  @*/
 	public /*@ pure @*/ int remainingCards() {
 		return cardStack.size();
 	}
 
-	public int[] playedCardsSize() {
+	/*@ requires players != null;
+	  @ assignable \nothing;
+	  @ ensures \result != null && \result.length == 2;
+	  @ ensures (\forall int i; 0 <= i && i < players.length;
+	  @ 	\result[i] == players[i].totalPlayedCards());
+	  @*/
+	public /*@ pure @*/ int[] playedCardsSize() {
 		int[] nr = new int[2];
 		int i = 0;
 		for (Player p : players) {
-			nr[i] = p.totalPlayedCards();
-			i++;
+			nr[i++] = p.totalPlayedCards();
 		}
 		return nr;
 	}
 
 	//Check if this card can be played
+	/*@ requires topCard != null;
+	  @ requires newCard != null;
+	  @ ensures \result == true || \result == false;
+	  @ ensures (\result == true) <==> (
+	  @ 	newCard.getType() == WILD
+	  @ 	|| newCard.getColor().equals(topCard.getColor())
+	  @ 	|| newCard.getValue().equals(topCard.getValue())
+	  @ 	|| (topCard.getType() == WILD && ((WildCard) topCard).getWildColor().equals(newCard.getColor())));
+	  @*/
 	private /*@ pure @*/ boolean canPlay(/*@ non_null @*/ UNOCard topCard, /*@ non_null @*/ UNOCard newCard) {
 
 		// Color or value matches
@@ -229,6 +250,12 @@ public class Game implements GameConstants {
 	}
 
 	//Check whether the player said or forgot to say UNO
+	/*@ requires players != null;
+	  @ assignable players[*];
+	  @ ensures (\forall int i; 0 <= i && i < players.length;
+	  @ 	(\old(players[i]).getTotalCards() == 1 && !\old(players[i]).getSaidUNO())
+	  @ 		==> players[i].getTotalCards() == \old(players[i]).getTotalCards() + 2);
+	  @*/
 	public void checkUNO() {
 		for (Player p : players) {
 			if (p.isMyTurn()) {
@@ -241,29 +268,48 @@ public class Game implements GameConstants {
 		}
 	}
 
+	/*@ requires players != null;
+	  @ requires infoPanel != null;
+	  @ assignable players[*];
+	  @ ensures (\forall int i; 0 <= i && i < players.length;
+	  @ 	(players[i].isMyTurn() && players[i].getTotalCards() == 2)
+	  @ 		==> players[i].getSaidUNO());
+	  @*/
 	public void setSaidUNO() {
 		for (Player p : players) {
-			if (p.isMyTurn()) {
-				if (p.getTotalCards() == 2) {
-					p.saysUNO();
-					infoPanel.setError(p.getName() + " said UNO");
-				}
+			if (p.isMyTurn() && p.getTotalCards() == 2) {
+				p.saysUNO();
+				infoPanel.setError(p.getName() + " said UNO");
 			}
 		}
 	}
 
+	/*@ requires pc != null;
+	  @ requires GAMEMODE == vsPC;
+	  @ ensures \result == pc.isMyTurn();
+	  @*/
 	public /*@ pure @*/ boolean isPCsTurn(){
 		return pc.isMyTurn();
 	}
 
-	//if it's PC's turn, play it for pc
+	// if it's PC's turn, play it for pc
+	/*@ 	requires pc != null;
+	  @ 	requires GAMEMODE == vsPC;
+	  @ 	requires pc.isMyTurn();
+	  @ 	assignable pc;
+	  @ also
+	  @ 	requires pc != null;
+	  @ 	requires GAMEMODE == vsPC;
+	  @ 	requires !pc.isMyTurn();
+	  @ 	assignable \nothing;
+	  @*/
 	public void playPC(/*@ non_null @*/ UNOCard topCard) {
-
 		if (pc.isMyTurn()) {
 			boolean done = pc.play(topCard);
 
-			if(!done)
+			if (!done) {
 				drawCard(topCard);
+			}
 		}
 	}
 }
