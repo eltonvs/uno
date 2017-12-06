@@ -70,7 +70,9 @@ public class CardDeck implements GameConstants {
 			card.addMouseListener(listener);
 	}
 
-	//@ ensures \result == UNOcards;
+	/*@ requires UNOcards != null;
+	  @ ensures \result == UNOcards;
+	  @*/
 	public /*@ pure @*/ LinkedList<UNOCard> getCards() {
 		return UNOcards;
 	}

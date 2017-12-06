@@ -15,12 +15,17 @@ public class WildCard extends UNOCard {
 		super(BLACK, WILD, cardValue);
 	}
 
-	//@ ensures chosenColor == wildColor;
+	/*@ requires wildColor != null;
+	  @ assignable chosenColor;
+	  @ ensures chosenColor == wildColor;
+	  @*/
 	public void useWildColor(Color wildColor){
 		chosenColor = wildColor;
 	}
 
-	//@ ensures \result == chosenColor;
+	/*@ requires chosenColor != null;
+	  @ ensures \result == chosenColor;
+	  @*/
 	public /*@ pure @*/ Color getWildColor(){
 		return chosenColor;
 	}

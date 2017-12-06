@@ -76,11 +76,11 @@ public class TablePanel extends JPanel implements GameConstants {
 	}
 
 	/*@ requires playedCard != null;
-	  @ ensures playedCard.getType() == WILD || playedCard.getType() != WILD;
+	  @ requires playedCard.getType() == WILD || playedCard.getType() != WILD;
 	  @*/
 	public void setBackgroundColor(UNOCard playedCard){
 		Color background;
-		if(playedCard.getType()==WILD)
+		if(playedCard.getType()== WILD)
 			background = ((WildCard) playedCard).getWildColor();
 		else
 			background = playedCard.getColor();

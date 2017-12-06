@@ -119,7 +119,7 @@ public class PlayerPanel extends JPanel implements GameConstants {
 		controlPanel.add(sayUNO);
 	}
  
-	/*@ ensures totalCards <= 8 || totalCards > 8;
+	/*@ requires totalCards <= 8 || totalCards > 8;
 	  @ ensures totalCards <= 8 ==> \result == 71; 
 	  @*/
 	private /*@ pure @*/ int calculateOffset(int width, int totalCards) {
@@ -132,7 +132,7 @@ public class PlayerPanel extends JPanel implements GameConstants {
 		}
 	}
 
-	/*@ ensures totalCards >= 8 || totalCards < 8;
+	/*@ requires totalCards >= 8 || totalCards < 8;
 	  @ ensures \result != null;
 	  @*/
 	private Point getPoint(int width, int totalCards) {

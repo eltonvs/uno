@@ -110,12 +110,12 @@ public abstract class UNOCard extends JPanel implements CardInterface, UNOConsta
 	}
 
 	//@ requires newSize != null;
-	public void setCardSize(Dimension newSize){
+	public void setCardSize(/*@ non_null @*/ Dimension newSize){
 		this.setPreferredSize(newSize);
 	}
 	
 	@Override
-	public void setColor(Color newColor) {
+	public void setColor(/*@ non_null @*/ Color newColor) {
 		this.cardColor = newColor;
 	}
 
@@ -125,7 +125,7 @@ public abstract class UNOCard extends JPanel implements CardInterface, UNOConsta
 	}
 
 	@Override
-	public void setValue(String newValue) {
+	public void setValue(/*@ non_null @*/ String newValue) {
 		this.value = newValue;
 	}
 
