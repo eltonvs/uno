@@ -100,6 +100,11 @@ public class Server implements GameConstants {
 	}
 
 	//request to play a card
+	/*@ requires infoPanel != null;
+	  @ requires game != null;
+	  @ assignable playedCards, game, session;
+	  @ ensures playedCards.size() >= \old(playedCards.size());
+	  @*/
 	public void playThisCard(/*@ non_null @*/ UNOCard clickedCard) {
 
 		// Check player's turn
@@ -145,8 +150,12 @@ public class Server implements GameConstants {
 	}
 
 	//Check if the game is over
+	/*@ requires game != null;
+	  @ requires infoPanel != null;
+	  @ assignable canPlay;
+	  @ ensures canPlay == !game.isOver();
+	  @*/
 	private void checkResults() {
-
 		if (game.isOver()) {
 			canPlay = false;
 			infoPanel.updateText("GAME OVER");
@@ -154,8 +163,11 @@ public class Server implements GameConstants {
 	}
 
 	//check player's turn
+	/*@ requires game != null;
+	  @ ensures \result == true <==> (\exists int i; 0 <= i && i < game.players.length;
+	  @ 	game.players[i].hasCard(clickedCard) && game.players[i].isMyTurn());
+	  @*/
 	public /*@ pure @*/ boolean isHisTurn(/*@ non_null @*/ UNOCard clickedCard) {
-
 		for (Player p : game.getPlayers()) {
 			if (p.hasCard(clickedCard) && p.isMyTurn())
 				return true;
